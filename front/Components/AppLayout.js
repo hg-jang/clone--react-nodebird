@@ -1,17 +1,19 @@
 import PropTypes from 'prop-types'
 import Link from 'next/link'
 import { Menu, Input, Row, Col } from 'antd'
-import { useState } from 'react'
 import UserProfile from '../Components/UserProfile'
 import LoginForm from '../Components/LoginForm'
 import styled from 'styled-components'
+import { useSelector } from 'react-redux'
 
 const SearchInput = styled(Input.Search)`
   vertical-align: middle
 `
 
 const AppLayout = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const isLoggedIn = useSelector((state) => state.user.isLoggedIn)
+  // 구조분해 할당 방식
+  // const { isLoggedIn } = useSelector((state) => state.user)
 
   return (
     <div>
