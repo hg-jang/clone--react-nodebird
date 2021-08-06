@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { Button, Card, Popover, Avatar, List, Comment } from 'antd'
 import { RetweetOutlined, HeartOutlined, MessageOutlined, EllipsisOutlined, HeartTwoTone } from '@ant-design/icons'
 import PostImages from './PostImages'
+import PostCardContent from './PostCardContent'
 import CommentForm from './CommentForm'
 
 const PostCard = ({ post }) => {
@@ -47,7 +48,7 @@ const PostCard = ({ post }) => {
         <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
+          description={<PostCardContent postData={post.content} />}
         />
       </Card>
       {commentFormOpened && (

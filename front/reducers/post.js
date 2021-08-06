@@ -5,12 +5,15 @@ export const initialState = {
       id: 1,
       nickname: '레드블루'
     },
-    content: '첫 번째 게시글',
+    content: '첫 번째 게시글 #기대#두근두근 ##메에롱',
     Images: [{
-      src: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.mhnew.com%2Fnews%2FarticleView.html%3Fidxno%3D11035&psig=AOvVaw3B6BiJfkRzRzwNx7T6OOF3&ust=1628225130936000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCNC9qLuJmfICFQAAAAAdAAAAABAF'
+      src: 'https://www.mhnew.com/news/photo/202007/11035_12043_403.jpg'
     },
     {
-      src: 'https://www.google.com/url?sa=i&url=https%3A%2F%2Fm.blog.naver.com%2Ftaiji15%2F221896943894&psig=AOvVaw0xFCkxDYlFZ6dn28XmtsuK&ust=1628225237197000&source=images&cd=vfe&ved=0CAoQjRxqFwoTCJjZ_uyJmfICFQAAAAAdAAAAABAJ'
+      src: 'http://image.sportsseoul.com/2020/04/08/news/2020040801000557800034481.jpg'
+    },
+    {
+      src: 'https://mblogthumb-phinf.pstatic.net/MjAyMDA0MDJfMjU3/MDAxNTg1ODM1OTI3MTg2.0-qfYJxCiuO9kMyGUoZVWvc2zisBUMgnvLtV2hTm4sIg.T7QyoCT9f8Ye01CW3KZJvMb7s6oec91Pwrq6z_L7gC0g.JPEG.skil666/SE-1f8eb5c4-e9c3-4440-850f-ad8655df1cb2.jpg?type=w800'
     }],
     Comments: [{
       User: {
