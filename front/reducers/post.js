@@ -1,36 +1,14 @@
 import shortId from 'shortid'
-import { ADD_POST_TO_ME } from './user'
+import produce from 'immer'
+import faker from 'faker'
 
 export const initialState = {
-  mainPosts: [{
-    id: 1,
-    User: {
-      id: 1,
-      nickname: 'hyeon-gwang'
-    },
-    content: '첫 번째 게시글 #기대#두근두근 ##메에롱',
-    Images: [{
-      id: shortId.generate(),
-      src: 'https://www.mhnew.com/news/photo/202007/11035_12043_403.jpg'
-    },
-    {
-      id: shortId.generate(),
-      src: 'http://image.sportsseoul.com/2020/04/08/news/2020040801000557800034481.jpg'
-    },
-    {
-      id: shortId.generate(),
-      src: 'https://mblogthumb-phinf.pstatic.net/MjAyMDA0MDJfMjU3/MDAxNTg1ODM1OTI3MTg2.0-qfYJxCiuO9kMyGUoZVWvc2zisBUMgnvLtV2hTm4sIg.T7QyoCT9f8Ye01CW3KZJvMb7s6oec91Pwrq6z_L7gC0g.JPEG.skil666/SE-1f8eb5c4-e9c3-4440-850f-ad8655df1cb2.jpg?type=w800'
-    }],
-    Comments: [{
-      id: shortId.generate(),
-      User: {
-        id: shortId.generate(),
-        nickname: '레드블루',
-      },
-      content: '얼른 보고 싶어요~'
-    }],
-  }],
+  mainPosts: [],
   imagePaths: [],
+  hasMorePosts: true,
+  loadPostsLoading: false,
+  loadPostsDone: false,
+  loadPostsError: null,
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
@@ -41,6 +19,29 @@ export const initialState = {
   addCommentDone: false,
   addCommentError: null,
 }
+
+export const generateDummyPost = (number) => Array(number).fill().map(() => ({
+  id: shortId.generate(),
+  User: {
+    id: shortId.generate(),
+    nickname: faker.name.findName()
+  },
+  content: faker.lorem.paragraph(),
+  Images: [{
+    src: faker.image.image(),
+  }],
+  Comments: [{
+    User: {
+      id: shortId.generate(),
+      nickname: faker.name.findName()
+    },
+    content: faker.lorem.sentence()
+  }],
+}))
+
+export const LOAD_POSTS_REQUEST = 'LOST_POSTS_REQUEST'
+export const LOAD_POSTS_SUCCESS = 'LOST_POSTS_SUCCESS'
+export const LOAD_POSTS_FAILURE = 'LOST_POSTS_FAILURE'
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST'
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS'
@@ -84,78 +85,87 @@ const dummyComment = (data) => ({
   content: data,
 })
 
+// reducer는 이전 상태를 액션을 통해 다음 상태로 만들어내는 함수
 const reducer = (state = initialState, action) => {
-  switch(action.type) {
-    case ADD_POST_REQUEST:
-      return {
-        ...state,
-        addPostLoading: true,
-        addPostDone: false,
-        addPostError: null,
+  return produce(state, (draft) => {
+    switch(action.type) {
+      case LOAD_POSTS_REQUEST:
+        draft.loadPostsLoading = true
+        draft.loadPostsDone = false
+        draft.loadPostsError = null
+        break;
+      case LOAD_POSTS_SUCCESS:
+        draft.loadPostsLoading = false
+        draft.loadPostsDone = true
+        draft.mainPosts = action.data.concat(draft.mainPosts)
+        draft.hasMorePosts = draft.mainPosts.length < 50
+        break;
+      case LOAD_POSTS_FAILURE:
+        draft.loadPostsLoading = false
+        draft.loadPostsError = action.error
+        break;
+      case ADD_POST_REQUEST:
+        draft.addPostLoading = true
+        draft.addPostDone = false
+        draft.addPostError = null
+        break;
+      case ADD_POST_SUCCESS:
+        draft.addPostLoading = false
+        draft.addPostDone = true
+        draft.mainPosts.unshift(dummyPost(action.data))
+        break;
+      case ADD_POST_FAILURE:
+        draft.addPostLoading = false
+        draft.addPostError = action.error
+        break;
+      case REMOVE_POST_REQUEST:
+        draft.removePostLoading = true
+        draft.removePostDone = false
+        draft.removePostError = null
+        break;
+      case REMOVE_POST_SUCCESS:
+        draft.removePostLoading = false
+        draft.removePostDone = true
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data)
+        break;
+      case REMOVE_POST_FAILURE:
+        draft.removePostLoading = false
+        draft.removePostError = action.error
+        break;
+      case ADD_COMMENT_REQUEST:
+        draft.addCommentLoading = true
+        draft.addCommentDone = false
+        draft.addCommentError = null
+        break;
+      case ADD_COMMENT_SUCCESS: {
+        const post = draft.mainPosts.find((v) => v.id === action.data.postId)
+        post.Comments.unshift(dummyComment(action.data.content))
+        draft.addCommentLoading = false
+        draft.addCommentDone = true
+        break;
+        // const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId)
+        // const post = { ...state.mainPosts[postIndex] }
+        // post.Comments = [dummyComment(action.data.content), ...post.Comments]
+        // const mainPosts = [...state.mainPosts]
+        // mainPosts[postIndex] = post
+  
+        // return {
+        //   ...state,
+        //   addCommentLoading: false,
+        //   addCommentDone: true,
+        //   mainPosts,
+        // }
       }
-    case ADD_POST_SUCCESS:
-      return {
-        ...state,
-        mainPosts: [dummyPost(action.data), ...state.mainPosts],
-        addPostLoading: false,
-        addPostDone: true,
-      }
-    case ADD_POST_FAILURE:
-      return {
-        ...state,
-        addPostLoading: false,
-        addPostError: action.error,
-      }
-    case REMOVE_POST_REQUEST:
-      return {
-        ...state,
-        removePostLoading: true,
-        removePostDone: false,
-        removePostError: null,
-      }
-    case REMOVE_POST_SUCCESS:
-      return {
-        ...state,
-        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
-        removePostLoading: false,
-        removePostDone: true,
-      }
-    case REMOVE_POST_FAILURE:
-      return {
-        ...state,
-        removePostLoading: false,
-        removePostError: action.error,
-      }
-    case ADD_COMMENT_REQUEST:
-      return {
-        ...state,
-        addCommentLoading: true,
-        addCommentDone: false,
-        addCommentError: null,
-      }
-    case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId)
-      const post = { ...state.mainPosts[postIndex] }
-      post.Comments = [dummyComment(action.data.content), ...post.Comments]
-      const mainPosts = [...state.mainPosts]
-      mainPosts[postIndex] = post
-
-      return {
-        ...state,
-        addCommentLoading: false,
-        addCommentDone: true,
-        mainPosts,
-      }
+      case ADD_COMMENT_FAILURE:
+        draft.addCommentLoading = false
+        draft.addCommentError = action.error
+        break;
+      default:
+        break;
     }
-    case ADD_COMMENT_FAILURE:
-      return {
-        ...state,
-        addCommentLoading: false,
-        addCommentError: action.error,
-      }
-    default:
-      return state
-  }
+  })
+
+  
 }
 
 export default reducer
