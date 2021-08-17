@@ -1,6 +1,7 @@
-import { Form, Input, Checkbox, Button } from 'antd'
+import React, { useCallback, useEffect, useState } from 'react'
+import Router from 'next/router'
 import Head from 'next/head'
-import { useCallback, useState } from 'react'
+import { Form, Input, Checkbox, Button } from 'antd'
 import AppLayout from '../Components/AppLayout'
 import useInput from '../hooks/useInput'
 import styled from 'styled-components'
@@ -13,7 +14,7 @@ const ErrorMessage = styled.div`
 
 const Signup = () => {
   const dispatch = useDispatch()
-  const { signUpLoading } = useSelector((state) => state.user)
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user)
 
   const [email, onChangeEmail] = useInput('')
   const [nickname, onChangeNickname] = useInput('')
@@ -45,7 +46,23 @@ const Signup = () => {
       type: SIGN_UP_REQUEST,
       data: { email, password, nickname },
     })
-  }, [password, passwordCheck, term])
+  }, [email, password, passwordCheck, term])
+
+  useEffect(() => {
+    if(signUpDone) {
+      Router.replace('/')
+    }
+  }, [signUpDone])
+  useEffect(() => {
+    if(signUpError) {
+      alert(signUpError)
+    }
+  }, [signUpError])
+  useEffect(() => {
+    if(me && me.id) {
+      Router.replace('/')
+    }
+  }, [me && me.id])
 
   return (
     <>

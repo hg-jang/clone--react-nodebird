@@ -18,9 +18,7 @@ const Profile = () => {
     if(!(me && me.id)) {
       Router.push('/')
     }
-  }, me && me.id)
-
-  
+  }, [me && me.id])
 
   return (
     <>

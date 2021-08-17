@@ -111,16 +111,16 @@ const reducer = (state = initialState, action) => {
         draft.logInError = null
         draft.logInDone = false
         break;
-        return {
-          ...state,
-          logInLoading: true,
-          logInError: null,
-          logInDone: false,
-        }
+        // return {
+        //   ...state,
+        //   logInLoading: true,
+        //   logInError: null,
+        //   logInDone: false,
+        // }
       case LOG_IN_SUCCESS:
         draft.logInLoading = false
+        draft.me = action.data
         draft.logInDone = true
-        draft.me = dummyUser(action.data)
         break;
       case LOG_IN_FAILURE:
         draft.logInLoading = false
@@ -148,7 +148,6 @@ const reducer = (state = initialState, action) => {
       case SIGN_UP_SUCCESS:
         draft.signUpLoading = false
         draft.signUpDone = true
-        draft.me = null
         break;
       case SIGN_UP_FAILURE:
         draft.signUpLoading = false
