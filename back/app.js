@@ -4,8 +4,10 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const dotenv = require('dotenv')
+const morgan = require('morgan')
 
 const postRouter = require('./routes/post')
+const postsRouter = require('./routes/posts')
 const userRouter = require('./routes/user')
 const db = require('./models')
 
@@ -21,10 +23,12 @@ db.sequelize.sync()
   .catch(console.error)
 passportconfig()
 
+
+app.use(morgan('dev'))
 // cors 문제 해결
 app.use(cors({
-  origin: '*',
-  credentials: false,
+  origin: 'http://localhost:3000',    // client 주소
+  credentials: true,                  // true면 쿠키 전달, false면 불가
 }))
 // front에서 받은 data를 req.body에 넣어주는 역할
 app.use(express.json())
@@ -39,21 +43,9 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/', (req, res) => {
-  res.send('hello express')
-})
-app.get('/api', (req, res) => {
-  res.send('hello api')
-})
-app.get('/api/posts', (req, res) => {
-  res.json([
-    { id: 1, content: 'hello' },
-    { id: 2, content: 'hello2' },
-    { id: 3, content: 'hello3' },
-  ])
-})
 
 app.use('/post', postRouter)
+app.use('/posts', postsRouter)
 app.use('/user', userRouter)
 
 app.listen(3065, () => {
