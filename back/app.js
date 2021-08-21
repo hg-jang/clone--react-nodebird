@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const passport = require('passport')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
+const path = require('path')
 
 const postRouter = require('./routes/post')
 const postsRouter = require('./routes/posts')
@@ -23,13 +24,17 @@ db.sequelize.sync()
   .catch(console.error)
 passportconfig()
 
+// 이미지 경로 관련
+app.use('/', express.static(path.join(__dirname, 'uploads')))
 
 app.use(morgan('dev'))
+
 // cors 문제 해결
 app.use(cors({
   origin: 'http://localhost:3000',    // client 주소
   credentials: true,                  // true면 쿠키 전달, false면 불가
 }))
+
 // front에서 받은 data를 req.body에 넣어주는 역할
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
