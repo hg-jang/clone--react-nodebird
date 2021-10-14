@@ -1,8 +1,8 @@
-import { DatabaseFilled } from '@ant-design/icons'
 import produce from 'immer'
 
 export const initialState = {
   mainPosts: [],
+  singlePost: null,
   imagePaths: [],
   hasMorePosts: true,
   uploadImagesLoading: false,
@@ -11,6 +11,9 @@ export const initialState = {
   loadPostsLoading: false,
   loadPostsDone: false,
   loadPostsError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
@@ -46,6 +49,10 @@ export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE'
 export const LOAD_POSTS_REQUEST = 'LOST_POSTS_REQUEST'
 export const LOAD_POSTS_SUCCESS = 'LOST_POSTS_SUCCESS'
 export const LOAD_POSTS_FAILURE = 'LOST_POSTS_FAILURE'
+
+export const LOAD_POST_REQUEST = 'LOST_POST_REQUEST'
+export const LOAD_POST_SUCCESS = 'LOST_POST_SUCCESS'
+export const LOAD_POST_FAILURE = 'LOST_POST_FAILURE'
 
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST'
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS'
@@ -101,12 +108,11 @@ const reducer = (state = initialState, action) => {
         draft.uploadImagesDone = false
         draft.uploadImagesError = null
         break;
-      case UPLOAD_IMAGES_SUCCESS: {
+      case UPLOAD_IMAGES_SUCCESS:
         draft.uploadImagesLoading = false
         draft.uploadImagesDone = true
         draft.imagePaths = action.data
         break;
-      }
       case UPLOAD_IMAGES_FAILURE:
         draft.uploadImagesLoading = false
         draft.uploadImagesError = action.error
@@ -157,6 +163,20 @@ const reducer = (state = initialState, action) => {
       case LOAD_POSTS_FAILURE:
         draft.loadPostsLoading = false
         draft.loadPostsError = action.error
+        break;
+      case LOAD_POST_REQUEST:
+        draft.loadPostLoading = true
+        draft.loadPostDone = false
+        draft.loadPostError = null
+        break;
+      case LOAD_POST_SUCCESS:
+        draft.loadPostLoading = false
+        draft.loadPostDone = true
+        draft.singlePost = action.data
+        break;
+      case LOAD_POST_FAILURE:
+        draft.loadPostLoading = false
+        draft.loadPostError = action.error
         break;
       case ADD_POST_REQUEST:
         draft.addPostLoading = true
