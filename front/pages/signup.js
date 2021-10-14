@@ -7,6 +7,8 @@ import useInput from '../hooks/useInput'
 import styled from 'styled-components'
 import { SIGN_UP_REQUEST } from '../reducers/user'
 import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { END } from'redux-saga'
 
 const ErrorMessage = styled.div`
   color: red
@@ -112,3 +114,21 @@ const Signup = () => {
 }
 
 export default Signup
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log('getServerSidProps start');
+  console.log(context.req.headers);
+
+  const cookie = context.req ? context.req.headers.cookie : ''
+  axios.defaults.headers.Cookie = ''
+  
+  if(context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie
+  }
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  })
+  
+  context.store.dispatch(END)
+  await context.store.sagaTask.toPromise()
+})

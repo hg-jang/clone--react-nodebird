@@ -6,6 +6,8 @@ import AppLayout from '../Components/AppLayout'
 import NicknameEditForm from '../Components/NicknameEditForm'
 import FollowList from '../Components/FollowList'
 import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from '../reducers/user'
+import axios from 'axios'
+import { END } from 'redux-saga'
 
 const Profile = () => {
   const dispatch = useDispatch()
@@ -45,3 +47,22 @@ const Profile = () => {
 }
 
 export default Profile
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log('getServerSidProps start');
+  console.log(context.req.headers);
+
+  const cookie = context.req ? context.req.headers.cookie : ''
+  axios.defaults.headers.Cookie = ''
+  
+  if(context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie
+  }
+  
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  })
+  
+  context.store.dispatch(END)
+  await context.store.sagaTask.toPromise()
+})

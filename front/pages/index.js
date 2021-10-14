@@ -46,6 +46,8 @@ const Home = () => {
   )
 }
 
+export default Home
+
 // redux의 getServerSideProps
 
 // store.dispatch의 결과가 HYDRATE로 보내짐.
@@ -78,5 +80,3 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   context.store.dispatch(END)
   await context.store.sagaTask.toPromise()
 })
-
-export default Home
