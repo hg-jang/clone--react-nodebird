@@ -1,10 +1,11 @@
 import { all, fork, takeLatest, put, call } from "redux-saga/effects";
 import axios from 'axios'
 import { 
+  LOAD_MY_INFO_SUCCESS, LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_REQUEST,
+  LOAD_USER_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST,
   REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_REQUEST,
   LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE, LOAD_FOLLOWERS_REQUEST, 
   LOAD_FOLLOWINGS_SUCCESS, LOAD_FOLLOWINGS_FAILURE, LOAD_FOLLOWINGS_REQUEST,
-  LOAD_USER_SUCCESS, LOAD_USER_FAILURE, LOAD_USER_REQUEST, 
   FOLLOW_SUCCESS, FOLLOW_FAILURE, FOLLOW_REQUEST, 
   UNFOLLOW_SUCCESS, UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, 
   LOG_IN_SUCCESS, LOG_IN_FAILURE, LOG_IN_REQUEST,
@@ -13,6 +14,43 @@ import {
   CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_FAILURE, CHANGE_NICKNAME_REQUEST, 
 } from '../reducers/user'
 
+
+function loadMyInfoAPI() {
+  return axios.get('/user')
+}
+function* loadMyInfo() {
+  try{
+    const result = yield call(loadMyInfoAPI)
+    yield put({
+      type: LOAD_MY_INFO_SUCCESS,
+      data: result.data,
+    })
+  } catch(err) {
+    console.error(err)
+    yield put({
+      type: LOAD_MY_INFO_FAILURE,
+      error: err.response.data,
+    })
+  }
+}
+
+function loadUserAPI(data) {
+  return axios.get(`/user/${data}`)
+}
+function* loadUser(action) {
+  try{
+    const result = yield call(loadUserAPI, action.data)
+    yield put({
+      type: LOAD_USER_SUCCESS,
+      data: result.data,
+    })
+  } catch(err) {
+    yield put({
+      type: LOAD_USER_FAILURE,
+      error: err.response.data,
+    })
+  }
+}
 
 function changeNicknameAPI(data) {
   return axios.patch('/user/nickname', { nickname: data })
@@ -27,24 +65,6 @@ function* changeNickname(action) {
   } catch(err) {
     yield put({
       type: CHANGE_NICKNAME_FAILURE,
-      error: err.response.data,
-    })
-  }
-}
-
-function loadUserAPI() {
-  return axios.get('/user')
-}
-function* loadUser(action) {
-  try{
-    const result = yield call(loadUserAPI, action.data)
-    yield put({
-      type: LOAD_USER_SUCCESS,
-      data: result.data,
-    })
-  } catch(err) {
-    yield put({
-      type: LOAD_USER_FAILURE,
       error: err.response.data,
     })
   }
@@ -193,6 +213,12 @@ function* signUp(action) {
   }
 }
 
+function* watchLoadMyInfo() {
+  yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
+}
+function* watchLoadUser() {
+  yield takeLatest(LOAD_USER_REQUEST, loadUser)
+}
 function* watchLoadFollowers() {
   yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers)
 }
@@ -204,9 +230,6 @@ function* watchRemoveFollower() {
 }
 function* watchChangeNickname() {
   yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickname)
-}
-function* watchLoadUser() {
-  yield takeLatest(LOAD_USER_REQUEST, loadUser)
 }
 function* watchFollow() {
   yield takeLatest(FOLLOW_REQUEST, follow)
@@ -226,11 +249,12 @@ function* watchSignUp() {
 
 export default function* userSaga() {
   yield all([
+    fork(watchLoadMyInfo),
+    fork(watchLoadUser),
     fork(watchRemoveFollower),
     fork(watchLoadFollowers),
     fork(watchLoadFollowings),
     fork(watchChangeNickname),
-    fork(watchLoadUser),
     fork(watchFollow),
     fork(watchUnfollow),
     fork(watchLogIn),

@@ -1,40 +1,50 @@
 import produce from 'immer'
 
 export const initialState = {
+  loadMyInfoLoading: false,      // 로그인하는 사용자 가져오기 시도중
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
+  loadUserLoading: false,        // 
+  loadUserError: false,
+  loadUserDone: null,
   loadFollowersLoading: false,   // 나를 팔로우 한 사람 가져오기 시도중
   loadFollowersDone: false,
   loadFollowersError: null,
   lodFollowingsLoading: false,   // 내가 팔로잉 한 사람 가져오기 시도중
   lodFollowingsDone: false,
   lodFollowingsError: null,
-  removeFollowerLoading: false,   // 나를 팔로우 한 사람 삭제
+  removeFollowerLoading: false,  // 나를 팔로우 한 사람 삭제
   removeFollowerDone: false,
   removeFollowerError: null,
-  loadUserLoading: false,   // 사용자 가져오기 시도중
-  loadUserDone: false,
-  loadUserError: null,
-  followLoading: false,   // 팔로우 시도중
+  followLoading: false,          // 팔로우 시도중
   followDone: false,
   followError: null,
-  unfollowLoading: false,   // 언팔로우 시도중
+  unfollowLoading: false,        // 언팔로우 시도중
   unfollowDone: false,
   unfollowError: null,
-  logInLoading: false,   // 로그인 시도중
+  logInLoading: false,           // 로그인 시도중
   logInDone: false,
   logInError: null,
-  logOutLoading: false,  // 로그아웃 시도중
+  logOutLoading: false,          // 로그아웃 시도중
   logOutDone: false,
   logOutError: null,
-  signUpLoading: false,  // 회원가입 시도중
+  signUpLoading: false,          // 회원가입 시도중
   signUpDone: false,
   signUpError: null,
   changeNicknameLoading: false,  // 닉네임 변경 시도중
   changeNicknameDone: false,
   changeNicknameError: null,
   me: null,
-  signUpData: {},
-  loginData: {},
+  userInfo: null,
 }
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST'
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS'
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE'
+
+export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST'
+export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS'
+export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE'
 
 export const LOAD_FOLLOWERS_REQUEST = 'LOAD_FOLLOWERS_REQUEST'
 export const LOAD_FOLLOWERS_SUCCESS = 'LOAD_FOLLOWERS_SUCCESS'
@@ -47,10 +57,6 @@ export const LOAD_FOLLOWINGS_FAILURE = 'LOAD_FOLLOWINGS_FAILURE'
 export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST'
 export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS'
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE'
-
-export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST'
-export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS'
-export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE'
 
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST'
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS'
@@ -137,6 +143,20 @@ const reducer = (state = initialState, action) => {
         draft.removeFollowerLoading = false
         draft.removeFollowerError = action.error
         break;
+      case LOAD_MY_INFO_REQUEST:
+        draft.loadMyInfoLoading = true
+        draft.loadMyInfoError = null
+        draft.loadMyInfoDone = false
+        break;
+      case LOAD_MY_INFO_SUCCESS:
+        draft.loadMyInfoLoading = false
+        draft.loadMyInfoDone = true
+        draft.me = action.data
+        break;
+      case LOAD_MY_INFO_FAILURE:
+        draft.loadMyInfoLoading = false
+        draft.loadMyInfoError = action.error
+        break;
       case LOAD_USER_REQUEST:
         draft.loadUserLoading = true
         draft.loadUserError = null
@@ -145,7 +165,7 @@ const reducer = (state = initialState, action) => {
       case LOAD_USER_SUCCESS:
         draft.loadUserLoading = false
         draft.loadUserDone = true
-        draft.me = action.data
+        draft.userInfo = action.data
         break;
       case LOAD_USER_FAILURE:
         draft.loadUserLoading = false
