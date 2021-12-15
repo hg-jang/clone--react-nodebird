@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react'
-import { useDispatch, useSelector } from "react-redux"
-import { END } from 'redux-saga'
-import AppLayout from "../Components/AppLayout"
-import PostForm from '../Components/PostForm'
-import PostCard from '../Components/PostCard'
-import { LOAD_MY_INFO_REQUEST } from '../reducers/user'
-import { LOAD_POSTS_REQUEST } from '../reducers/post'
-import wrapper from '../store/configureStore'
-import axios from 'axios'
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
+import { LOAD_POSTS_REQUEST } from '../reducers/post';
+import axios from 'axios';
+import { END } from 'redux-saga';
+import wrapper from '../store/configureStore';
+
+import AppLayout from "../Components/AppLayout";
+import PostForm from '../Components/PostForm';
+import PostCard from '../Components/PostCard';
 
 const Home = () => {
   const dispatch = useDispatch()
@@ -46,7 +47,7 @@ const Home = () => {
   )
 }
 
-export default Home
+export default Home;
 
 // redux의 getServerSideProps
 

@@ -1,14 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import Router from 'next/router'
-import Head from 'next/head'
-import { Form, Input, Checkbox, Button } from 'antd'
-import AppLayout from '../Components/AppLayout'
-import useInput from '../hooks/useInput'
-import styled from 'styled-components'
-import { SIGN_UP_REQUEST } from '../reducers/user'
-import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
-import { END } from'redux-saga'
+import React, { useCallback, useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Form, Input, Checkbox, Button } from 'antd';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import Router from 'next/router';
+import axios from 'axios';
+import { END } from 'redux-saga';
+
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
+import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
+import wrapper from '../store/configureStore';
 
 const ErrorMessage = styled.div`
   color: red
