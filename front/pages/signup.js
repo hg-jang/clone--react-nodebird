@@ -7,7 +7,7 @@ import Router from 'next/router';
 import axios from 'axios';
 import { END } from 'redux-saga';
 
-import AppLayout from '../components/AppLayout';
+import AppLayout from '../Components/AppLayout';
 import useInput from '../hooks/useInput';
 import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
